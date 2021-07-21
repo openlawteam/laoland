@@ -916,6 +916,16 @@ const entryExecutor = (contract, flags) => {
   };
 };
 
+const daoAccessFlags = [
+  "REPLACE_ADAPTER",
+  "SUBMIT_PROPOSAL",
+  "UPDATE_DELEGATE_KEY",
+  "SET_CONFIGURATION",
+  "ADD_EXTENSION",
+  "REMOVE_EXTENSION",
+  "NEW_MEMBER",
+];
+
 const entryDao = (name, contract, flags) => {
   const values = [
     flags.REPLACE_ADAPTER,
@@ -940,6 +950,18 @@ const entry = (values) => {
   return values
     .map((v, idx) => (v === true ? 2 ** idx : 0))
     .reduce((a, b) => a + b);
+};
+
+const parseDaoFlags = (aclFlags) => {
+  return aclFlags
+    .split(",")
+    .map((f) => f.toUpperCase())
+    .reduce((flags, flag) => {
+      if (daoAccessFlags.includes(flag)) {
+        return { ...flags, [flag]: true };
+      }
+      throw Error(`Invalid DAO Access Flag: ${flag}`);
+    }, {});
 };
 
 const networks = [
@@ -983,5 +1005,6 @@ module.exports = {
   entryBank,
   entryDao,
   entryExecutor,
+  parseDaoFlags,
   getNetworkDetails,
 };
