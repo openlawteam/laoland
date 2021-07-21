@@ -952,6 +952,18 @@ const entry = (values) => {
     .reduce((a, b) => a + b);
 };
 
+const parseDaoFlags = (aclFlags) => {
+  return aclFlags
+    .split(",")
+    .map((f) => f.toUpperCase())
+    .reduce((flags, flag) => {
+      if (daoAccessFlags.includes(flag)) {
+        return { ...flags, [flag]: true };
+      }
+      throw Error(`Invalid DAO Access Flag: ${flag}`);
+    }, {});
+};
+
 const networks = [
   {
     name: "ganache",
@@ -993,6 +1005,6 @@ module.exports = {
   entryBank,
   entryDao,
   entryExecutor,
-  daoAccessFlags,
+  parseDaoFlags,
   getNetworkDetails,
 };
